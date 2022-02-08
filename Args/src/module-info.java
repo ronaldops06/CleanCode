@@ -1,0 +1,3 @@
+module Args {
+	requires junit;
+}
