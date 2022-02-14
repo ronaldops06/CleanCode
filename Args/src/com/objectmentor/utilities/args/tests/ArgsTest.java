@@ -3,6 +3,7 @@ package com.objectmentor.utilities.args.tests;
 import java.text.ParseException;
 
 import com.objectmentor.utilities.args.Args;
+import com.objectmentor.utilities.args.Args.ArgsException;
 
 import junit.framework.TestCase;
 

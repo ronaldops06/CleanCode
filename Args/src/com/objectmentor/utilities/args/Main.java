@@ -4,7 +4,7 @@ public class Main {
 
 	public static void main(String[] args) {		
 		try {
-			Args arg = new Args("x#", new String[] {"-x", "Forty two"});
+			Args arg = new Args("x#", new String[] {"-x"});
 			System.out.printf(arg.errorMessage()+"\n");
 			System.out.print(arg.errorArgumentId+"\n");
 			System.out.printf(arg.errorParameter+"\n");
