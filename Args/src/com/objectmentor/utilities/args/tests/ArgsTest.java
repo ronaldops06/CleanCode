@@ -72,6 +72,7 @@ public class ArgsTest extends TestCase {
 	}
 	
 	public void testInvalidInteger() throws Exception {
+		
 		Args args = new Args("x#", new String[] {"-x", "Forty two"});
 		assertEquals("Argument -x expects an integer but was 'Forty two'.", args.errorMessage());
 		assertEquals('x', args.errorArgumentId);
@@ -83,4 +84,6 @@ public class ArgsTest extends TestCase {
 		assertEquals("Could not find integer parameter for -x.", args.errorMessage());
 		assertEquals('x', args.errorArgumentId);
 	}
+	
+
 }
