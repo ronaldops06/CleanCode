@@ -16,7 +16,7 @@ public class Args {
 	private List<String> argsList;
 	
 	private enum ErrorCode {
-		OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT
+		OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT, MISSING_DOUBLE, INVALID_DOUBLE
 	}
 	
 	public Args(String schema, String[] args) throws ParseException{
@@ -57,6 +57,8 @@ public class Args {
 			marshalers.put(elementId, new StringArgumentMarshaler());
 		else if (isIntegerSchemaElement(elementTail))
 			marshalers.put(elementId, new IntegerArgumentMarshaler());
+		else if (isDoubleSchemaElement(elementTail))
+			marshalers.put(elementId, new DoubleArgumentMarshaler());
 		else
 			throw new ParseException(String.format("Argument: %c has invalid format: %s.", elementId, elementTail), 0);
 	}
@@ -76,6 +78,10 @@ public class Args {
 	
 	private boolean isIntegerSchemaElement(String elementTail) {
 		return elementTail.equals("#");
+	}
+	
+	private boolean isDoubleSchemaElement(String elementTail) {
+		return elementTail.equals("##");
 	}
 	
 	private boolean parseArguments() throws ArgsException {
@@ -145,6 +151,10 @@ public class Args {
 				return String.format("Argument -%c expects an integer but was '%s'.", errorArgumentId, errorParameter);
 			case MISSING_INTEGER:
 				return String.format("Could not find integer parameter for -%c.", errorArgumentId);
+			case INVALID_DOUBLE:
+				return String.format("Argument -%c expects an double but was '%s'.", errorArgumentId, errorParameter);
+			case MISSING_DOUBLE:
+				return String.format("Could not find double parameter for -%c.", errorArgumentId);
 		}
 		return "";
 	}
@@ -186,6 +196,15 @@ public class Args {
 		return am == null ? 0 : (Integer) am.get();
 		} catch (ClassCastException e) {
 			return 0;
+		}
+	}
+	
+	public double getDouble(char arg) {
+		Args.ArgumentMarshaler am = marshalers.get(arg);
+		try {
+		return am == null ? 0 : (Double) am.get();
+		} catch (ClassCastException e) {
+			return 0.0;
 		}
 	}
 	
@@ -266,6 +285,29 @@ public class Args {
 		
 		public Object get() {
 			return integerValue;
+		}
+	}
+	
+	private class DoubleArgumentMarshaler implements ArgumentMarshaler {
+		private double doubleValue = 0;
+		
+		public void set(Iterator<String> currentArgument) throws ArgsException {
+			String parameter = null;
+			try {
+				parameter = currentArgument.next();
+				doubleValue = Double.parseDouble(parameter);
+			} catch (NoSuchElementException e) {
+				errorCode = ErrorCode.MISSING_DOUBLE;
+				throw new ArgsException();
+			} catch (NumberFormatException e) {
+				errorParameter = parameter;
+				errorCode = ErrorCode.INVALID_DOUBLE;
+				throw e;
+			}
+		}
+		
+		public Object get() {
+			return doubleValue;
 		}
 	}
 }
