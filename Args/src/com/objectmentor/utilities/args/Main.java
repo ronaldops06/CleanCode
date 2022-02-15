@@ -4,14 +4,14 @@ public class Main {
 
 	public static void main(String[] args) {		
 		try {
-			Args arg = new Args("x#", new String[] {"-x", "Forty two"});
-			System.out.printf(arg.errorMessage()+"\n");
-			System.out.print(arg.errorArgumentId+"\n");
-			System.out.printf(arg.errorParameter+"\n");
-			boolean logging = arg.getBoolean('1');
+			Args arg = new Args("p*", new String[] {"-pteste"});
+			boolean logging = arg.getBoolean('l');
 			int port = arg.getInt('p');
 			String directory = arg.getString('d');
 			executeApplication(logging, port, directory);
+		} catch (ArgsException e) {
+			System.out.printf("Argument error: %s\n", e.getErrorCode());
+			System.out.printf("%s\n", e.getErrorArgumentId());
 		} catch (Exception e) {
 			System.out.printf("Argument error: %s\n", e.getMessage());
 		}
